@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8" />
+<title>গেম পয়েন্ট ট্র্যাকার</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+  input, button { padding: 8px; margin: 5px 0; width: 100%; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+</style>
+</head>
+<body>
+
+<h2>গেম পয়েন্ট ট্র্যাকার</h2>
+
+<label>গেমারের নাম</label>
+<input type="text" id="playerName" placeholder="নাম লিখুন" />
+<label>রোল</label>
+<input type="text" id="playerRole" placeholder="রোল লিখুন" />
+<label>পয়েন্ট</label>
+<input type="number" id="playerPoints" placeholder="পয়েন্ট লিখুন" />
+
+<button onclick="addPlayer()">গেমার যোগ করুন</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>নাম</th>
+      <th>রোল</th>
+      <th>পয়েন্ট</th>
+      <th>অ্যাকশন</th>
+    </tr>
+  </thead>
+  <tbody id="playersList"></tbody>
+</table>
+
+<script>
+  let players = JSON.parse(localStorage.getItem('players') || '[]');
+
+  function render() {
+    const tbody = document.getElementById('playersList');
+    tbody.innerHTML = '';
+    players.forEach((p, i) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.role}</td>
+          <td>${p.points}</td>
+          <td>
+            <button onclick="deletePlayer(${i})">মুছুন</button>
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function addPlayer() {
+    const name = document.getElementById('playerName').value.trim();
+    const role = document.getElementById('playerRole').value.trim();
+    const points = parseInt(document.getElementById('playerPoints').value);
+    if (!name || !role || isNaN(points)) {
+      alert('সব ফিল্ড পূরণ করুন!');
+      return;
+    }
+    players.push({ name, role, points });
+    localStorage.setItem('players', JSON.stringify(players));
+    render();
+    document.getElementById('playerName').value = '';
+    document.getElementById('playerRole').value = '';
+    document.getElementById('playerPoints').value = '';
+  }
+
+  function deletePlayer(index) {
+    players.splice(index, 1);
+    localStorage.setItem('players', JSON.stringify(players));
+    render();
+  }
+
+  render();
+</script>
+
+</body>
+</html>
